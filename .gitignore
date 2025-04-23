@@ -1,0 +1,6 @@
+build/**
+build/
+vcpkg/**
+vcpkg/
+env.sh
+.cache/**

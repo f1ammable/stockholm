@@ -1,0 +1,3 @@
+{
+  "dependencies": ["re2", "fmt"]
+}
