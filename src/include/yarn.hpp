@@ -1,7 +1,6 @@
 #ifndef STOCKHOLM_YARN_HPP
 #define STOCKHOLM_YARN_HPP
 
-#include <cstddef>
 #include <string_view>
 
 namespace stockholm::detail {
@@ -13,24 +12,24 @@ class Yarn {
   size_t m_size;
 
  public:
-  inline explicit consteval Yarn() : m_buffer(), m_size(0) {}
-  inline explicit consteval Yarn(std::string_view str) : m_buffer(), m_size(0) {
+  explicit consteval Yarn() : m_buffer(), m_size(0) {}
+  explicit consteval Yarn(std::string_view str) : m_buffer(), m_size(0) {
     append(str);
   }
-  inline explicit consteval Yarn(char c) : m_buffer(), m_size(0) { append(c); }
+  explicit consteval Yarn(char c) : m_buffer(), m_size(0) { append(c); }
 
   template <std::size_t N>
-  inline explicit consteval Yarn(const char (&str)[N]) : m_buffer(), m_size(0) {
+  explicit consteval Yarn(const char (&str)[N]) : m_buffer(), m_size(0) {
     append(std::string_view(str, N - 1));
   }
 
-  inline consteval Yarn(const Yarn &other) : m_size(other.m_size) {
+  consteval Yarn(const Yarn &other) : m_buffer(), m_size(other.m_size) {
     for (size_t i = 0; i < m_size; i++) {
       m_buffer[i] = other.m_buffer[i];
     }
   }
 
-  inline consteval void append(std::string_view str) {
+  consteval void append(const std::string_view str) {
     for (char c : str) {
       if (m_size < capacity - 1) {
         m_buffer[m_size++] = c;
@@ -39,20 +38,20 @@ class Yarn {
     m_buffer[m_size] = '\0';
   }
 
-  inline consteval void append(char c) {
+  consteval void append(char c) {
     if (m_size < capacity - 1) {
       m_buffer[m_size++] = c;
       m_buffer[m_size] = '\0';
     }
   }
 
-  inline consteval std::string_view view() const {
+  [[nodiscard]] consteval std::string_view view() const {
     return std::string_view(m_buffer, m_size);
   }
 
-  inline consteval const char *c_str() const { return m_buffer; }
+  [[nodiscard]] consteval const char *c_str() const { return m_buffer; }
 
-  inline consteval size_t size() const { return m_size; }
+  [[nodiscard]] consteval size_t size() const { return m_size; }
 };
 }  // namespace stockholm::detail
 

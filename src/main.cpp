@@ -1,5 +1,6 @@
-#include "include/pattern.hpp"
 #include <iostream>
+
+#include "include/pattern.hpp"
 
 int main(int argc, char *argv[]) {
   constexpr auto x = Capture(OneOrMore("b"));

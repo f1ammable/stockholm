@@ -7,11 +7,11 @@
 
 namespace stockholm::detail {
 template <typename Format, typename... Args>
-[[nodiscard]] inline consteval std::string constexpr_fmt(Format format,
-                                                         Args &&...args) {
+[[nodiscard]] consteval std::string constexpr_fmt(Format format,
+                                                  Args &&...args) {
   char c[64] = {};
   fmt::format_to(c, format, std::forward<Args>(args)...);
-  return std::string(c);
+  return {c};
 }
 }  // namespace stockholm::detail
 
