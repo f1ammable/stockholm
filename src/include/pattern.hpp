@@ -3,7 +3,6 @@
 
 #include <fmt/compile.h>
 
-#include <concepts>
 #include <string>
 #include <string_view>
 
@@ -13,9 +12,10 @@
 namespace stockholm {
 
 class BasePattern {
- protected:
+ private:
   detail::Yarn<> m_pattern;
 
+ public:
   template <std::size_t N>
   explicit consteval BasePattern(const char (&str)[N]) : m_pattern(str) {}
 
@@ -24,39 +24,33 @@ class BasePattern {
   explicit consteval BasePattern(const std::string& s)
       : m_pattern(std::move(s)) {}
 
- public:
-  virtual ~BasePattern() = default;
-  BasePattern(const BasePattern&) = delete;
-  BasePattern& operator=(const BasePattern&) = delete;
-  BasePattern(BasePattern&&) = delete;
-  BasePattern& operator=(BasePattern&&) = delete;
-
-  [[nodiscard]] consteval std::string_view pattern() const {
+  [[nodiscard]] consteval std::string_view str() const {
     return this->m_pattern.view();
   }
+
+  [[nodiscard]] consteval BasePattern OneOrMore(std::string_view str) {
+    m_pattern.append(detail::constexpr_fmt(FMT_COMPILE("[{}]+"), str));
+    return *this;
+  }
+
+  [[nodiscard]] consteval BasePattern One(std::string_view str) {
+    m_pattern.append(detail::constexpr_fmt(FMT_COMPILE("[{}]"), str));
+    return *this;
+  }
 };
-
-class OneOrMorePattern final : public BasePattern {
- public:
-  template <std::size_t N>
-  explicit consteval OneOrMorePattern(const char (&str)[N])
-      : BasePattern(str) {}
-
-  explicit consteval OneOrMorePattern(const std::string& s) : BasePattern(s) {}
-};
-
 }  // namespace stockholm
 
-template <typename T>
-  requires std::derived_from<T, stockholm::BasePattern>
-[[nodiscard]] consteval std::string Capture(const T& pattern) {
-  return std::string(pattern.pattern());
+[[nodiscard]] consteval std::string Capture(
+    const stockholm::BasePattern& pattern) {
+  return std::string(pattern.str());
 }
 
+// [[nodiscard]] consteval stockholm::BasePattern Group(const
+// stockholm::BasePattern& pattern) {}
+
 template <std::size_t N>
-[[nodiscard]] consteval stockholm::OneOrMorePattern OneOrMore(
-    const char (&str)[N]) {
-  return stockholm::OneOrMorePattern(
+[[nodiscard]] consteval stockholm::BasePattern OneOrMore(const char (&str)[N]) {
+  return stockholm::BasePattern(
       stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), str));
 }
 #endif  // !STOCKHOLM_PATTERN_HPP
