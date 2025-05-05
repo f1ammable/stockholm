@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 
+#include "selector.hpp"
 #include "util.hpp"
 #include "yarn.hpp"
 
@@ -17,7 +18,6 @@ class Pattern {
 
  public:
   template <std::size_t N>
-  explicit consteval Pattern(const char (&str)[N]) : m_pattern(str) {}
 
   explicit consteval Pattern(char c) : m_pattern(c) {}
 
@@ -54,9 +54,24 @@ class Pattern {
       stockholm::detail::constexpr_fmt(FMT_COMPILE("({})"), pattern.str()));
 }
 
-template <std::size_t N>
-[[nodiscard]] consteval stockholm::Pattern OneOrMore(const char (&str)[N]) {
+template <typename T>
+concept StrLiteral =
+    std::is_array_v<std::remove_reference_t<T>> &&
+    std::same_as<std::remove_all_extents_t<std::remove_reference_t<T>>,
+                 const char>;
+
+template <typename T>
+  requires StrLiteral<T>
+[[nodiscard]] consteval stockholm::Pattern OneOrMore(T&& s) {
   return stockholm::Pattern(
-      stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), str));
+      stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), s));
 }
+
+template <Selector S>
+[[nodiscard]] consteval stockholm::Pattern OneOrMore(
+    const Matcher<S>& pattern) {
+  return stockholm::Pattern(
+      stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), pattern.str()));
+}
+
 #endif  // !STOCKHOLM_PATTERN_HPP
