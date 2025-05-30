@@ -67,11 +67,9 @@ template <typename T>
       stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), s));
 }
 
-template <Selector S>
-[[nodiscard]] consteval stockholm::Pattern OneOrMore(
-    const Matcher<S>& pattern) {
+[[nodiscard]] consteval stockholm::Pattern OneOrMore(Matcher m) {
   return stockholm::Pattern(
-      stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), pattern.str()));
+      stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), m.str()));
 }
 
 #endif  // !STOCKHOLM_PATTERN_HPP
