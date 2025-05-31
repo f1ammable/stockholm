@@ -22,7 +22,7 @@ class Matcher {
     }
   }
 
-  [[nodiscard]] consteval std::string_view str() const {
+  [[nodiscard]] consteval operator std::string_view() const {
     return m_pattern.view();
   }
 };

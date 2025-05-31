@@ -3,6 +3,7 @@
 
 #include <fmt/compile.h>
 
+#include <concepts>
 #include <string>
 #include <string_view>
 
@@ -55,21 +56,13 @@ class Pattern {
 }
 
 template <typename T>
-concept StrLiteral =
-    std::is_array_v<std::remove_reference_t<T>> &&
-    std::same_as<std::remove_all_extents_t<std::remove_reference_t<T>>,
-                 const char>;
+concept StrLike = std::convertible_to<T, std::string_view>;
 
 template <typename T>
-  requires StrLiteral<T>
+  requires StrLike<T>
 [[nodiscard]] consteval stockholm::Pattern OneOrMore(T&& s) {
-  return stockholm::Pattern(
-      stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), s));
-}
-
-[[nodiscard]] consteval stockholm::Pattern OneOrMore(Matcher m) {
-  return stockholm::Pattern(
-      stockholm::detail::constexpr_fmt(FMT_COMPILE("[{}]+"), m.str()));
+  return stockholm::Pattern(stockholm::detail::constexpr_fmt(
+      FMT_COMPILE("[{}]+"), std::string_view(s)));
 }
 
 #endif  // !STOCKHOLM_PATTERN_HPP
