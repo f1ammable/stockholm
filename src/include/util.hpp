@@ -6,6 +6,9 @@
 #include <string>
 
 namespace stockholm::detail {
+template <typename T>
+concept StrLike = std::convertible_to<T, std::string_view>;
+
 template <typename Format, typename... Args>
 [[nodiscard]] consteval std::string constexpr_fmt(Format format,
                                                   Args &&...args) {

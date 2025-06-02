@@ -5,7 +5,7 @@
 #ifndef STOCKHOLM_SELECTOR_HPP
 #define STOCKHOLM_SELECTOR_HPP
 
-enum class Selector { ALPHA, NUM };
+enum class Selector { ALPHANUM, ALPHANUM_LOWER, ALPHANUM_HIGHER, NUM };
 
 class Matcher {
   stockholm::detail::Yarn<> m_pattern;
@@ -13,11 +13,17 @@ class Matcher {
  public:
   explicit consteval Matcher(Selector s) {
     switch (s) {
-      case Selector::ALPHA:
-        m_pattern.append("a-zA-Z0-9");
+      case Selector::ALPHANUM:
+        m_pattern.append("[a-zA-Z0-9]");
+        break;
+      case Selector::ALPHANUM_LOWER:
+        m_pattern.append("[a-z0-9]");
+        break;
+      case Selector::ALPHANUM_HIGHER:
+        m_pattern.append("[A-Z0-9]");
         break;
       case Selector::NUM:
-        m_pattern.append(R"(\d+)");
+        m_pattern.append(R"(\d)");
         break;
     }
   }
