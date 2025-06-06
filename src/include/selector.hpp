@@ -1,10 +1,8 @@
-#include <string_view>
-
-#include "yarn.hpp"
-
 #ifndef STOCKHOLM_SELECTOR_HPP
 #define STOCKHOLM_SELECTOR_HPP
 
+#include <string_view>
+#include "yarn.hpp"
 enum class Selector { ALPHANUM, ALPHANUM_LOWER, ALPHANUM_HIGHER, NUM };
 
 class Matcher {

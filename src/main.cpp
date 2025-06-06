@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include "include/pattern.hpp"
+#include "include/selector.hpp"
 
-int main(int argc, char *argv[]) {
+int main() {
   constexpr auto x = Capture(Start()
                                  .OneOrMore(Matcher(Selector::ALPHANUM))
                                  .One(Matcher(Selector::NUM))

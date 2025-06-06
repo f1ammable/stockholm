@@ -6,7 +6,6 @@
 #include <string>
 #include <string_view>
 
-#include "selector.hpp"
 #include "util.hpp"
 #include "yarn.hpp"
 
@@ -19,7 +18,7 @@ class Pattern {
  public:
   consteval Pattern() = default;
 
-  explicit consteval Pattern(char c) : m_pattern(c) {}
+  explicit consteval Pattern(const char c) : m_pattern(c) {}
 
   explicit consteval Pattern(const std::string& s) : m_pattern(std::move(s)) {}
 
@@ -29,17 +28,33 @@ class Pattern {
 
   template <typename T>
     requires stockholm::detail::StrLike<T>
-  [[nodiscard]] consteval Pattern OneOrMore(T&& s) {
+  [[nodiscard]] consteval Pattern ZeroOrMore(T&& str) {
     m_pattern.append(
-        detail::constexpr_fmt(FMT_COMPILE("{}+"), std::string_view(s)));
+        detail::constexpr_fmt(FMT_COMPILE("{}*"), std::string_view(str)));
     return *this;
   }
 
   template <typename T>
     requires stockholm::detail::StrLike<T>
-  [[nodiscard]] consteval Pattern One(T&& s) {
+  [[nodiscard]] consteval Pattern One(T&& str) {
     m_pattern.append(
-        detail::constexpr_fmt(FMT_COMPILE("{}"), std::string_view(s)));
+        detail::constexpr_fmt(FMT_COMPILE("{}"), std::string_view(str)));
+    return *this;
+  }
+
+  template <typename T>
+    requires stockholm::detail::StrLike<T>
+  [[nodiscard]] consteval Pattern OneOrMore(T&& str) {
+    m_pattern.append(
+        detail::constexpr_fmt(FMT_COMPILE("{}+"), std::string_view(str)));
+    return *this;
+  }
+
+  template <typename T>
+    requires stockholm::detail::StrLike<T>
+  [[nodiscard]] consteval Pattern Optional(T&& str) {
+    m_pattern.append(
+        detail::constexpr_fmt(FMT_COMPILE("{}?"), std::string_view(str)));
     return *this;
   }
 
