@@ -2,6 +2,7 @@
 #define STOCKHOLM_SELECTOR_HPP
 
 #include <string_view>
+
 #include "yarn.hpp"
 enum class Selector { ALPHANUM, ALPHANUM_LOWER, ALPHANUM_HIGHER, NUM };
 
@@ -9,7 +10,7 @@ class Matcher {
   stockholm::detail::Yarn<> m_pattern;
 
  public:
-  explicit consteval Matcher(Selector s) {
+  explicit consteval Matcher(const Selector s) {
     switch (s) {
       case Selector::ALPHANUM:
         m_pattern.append("[a-zA-Z0-9]");

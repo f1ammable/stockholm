@@ -63,6 +63,14 @@ class Pattern {
     return *this;
   }
 
+  template <typename T>
+    requires stockholm::detail::StrLike<T>
+  [[nodiscard]] consteval Pattern Quantify(T&& str, int min, int max) {
+    m_pattern.append(detail::constexpr_fmt(FMT_COMPILE("{}{{{},{}}}"),
+                                           std::string_view(str), min, max));
+    return *this;
+  }
+
   // Possibly include this?
   //   auto grouped = Pattern{};
   //   grouped.m_pattern.append(
