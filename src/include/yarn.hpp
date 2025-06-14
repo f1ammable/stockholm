@@ -1,6 +1,7 @@
 #ifndef STOCKHOLM_YARN_HPP
 #define STOCKHOLM_YARN_HPP
 
+#include <cstring>
 #include <string_view>
 
 namespace stockholm::detail {
@@ -13,7 +14,7 @@ class Yarn {
 
  public:
   explicit consteval Yarn() : m_buffer(), m_size(0) {}
-  explicit consteval Yarn(std::string_view str) : m_buffer(), m_size(0) {
+  explicit consteval Yarn(const std::string_view str) : m_buffer(), m_size(0) {
     append(str);
   }
   explicit consteval Yarn(char c) : m_buffer(), m_size(0) { append(c); }
@@ -52,6 +53,10 @@ class Yarn {
   [[nodiscard]] consteval const char *c_str() const { return m_buffer; }
 
   [[nodiscard]] consteval size_t size() const { return m_size; }
+
+  consteval Yarn operator+(const Yarn &other) const {
+    return Yarn(strncat(m_buffer, other.m_buffer, other.m_size));
+  }
 };
 }  // namespace stockholm::detail
 

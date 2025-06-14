@@ -15,12 +15,16 @@ class Pattern {
  private:
   detail::Yarn<> m_pattern;
 
- public:
   consteval Pattern() = default;
 
   explicit consteval Pattern(const char c) : m_pattern(c) {}
 
   explicit consteval Pattern(const std::string& s) : m_pattern(std::move(s)) {}
+
+  explicit consteval Pattern(const detail::Yarn<>& str) : m_pattern(str) {}
+
+ public:
+  friend consteval Pattern(::Start)();
 
   [[nodiscard]] consteval std::string_view str() const {
     return this->m_pattern.view();
@@ -71,12 +75,53 @@ class Pattern {
     return *this;
   }
 
-  // Possibly include this?
-  //   auto grouped = Pattern{};
-  //   grouped.m_pattern.append(
-  //       detail::constexpr_fmt(FMT_COMPILE("({})"), this->str()));
-  //   return grouped;
-  // }
+  template <typename T>
+    requires stockholm::detail::StrLike<T>
+  [[nodiscard]] consteval Pattern Exactly(T&& str, int count) {
+    m_pattern.append(
+        detail::constexpr_fmt(FMT_COMPILE("{}{{{}}}"), str, count));
+    return *this;
+  }
+
+  template <typename T>
+    requires stockholm::detail::StrLike<T>
+  [[nodiscard]] consteval Pattern AtLeast(T&& str, int min) {
+    m_pattern.append(detail::constexpr_fmt(FMT_COMPILE("{}{{{},}}"), str, min));
+    return *this;
+  }
+
+  template <typename T>
+    requires stockholm::detail::StrLike<T>
+  [[nodiscard]] consteval Pattern AtMost(T&& str, int max) {
+    m_pattern.append(detail::constexpr_fmt(FMT_COMPILE("{}{{,{}}}"), str, max));
+    return *this;
+  }
+
+  [[nodiscard]] consteval Pattern CharacterClass(std::string_view chars) {
+    m_pattern.append(detail::constexpr_fmt(FMT_COMPILE("[{}]"), chars));
+    return *this;
+  }
+
+  [[nodiscard]] consteval Pattern Range(char from, char to) {
+    m_pattern.append(detail::constexpr_fmt(FMT_COMPILE("[{}-{}]"), from, to));
+    return *this;
+  }
+
+  [[nodiscard]] consteval Pattern operator+(const Pattern& rhs) const {
+    return Pattern(this->m_pattern + rhs.m_pattern);
+  }
+
+  [[nodiscard]] consteval Pattern operator|(const Pattern& rhs) const {
+    return Pattern(detail::constexpr_fmt(FMT_COMPILE("{}|{}"),
+                                         this->m_pattern.view(), rhs.str()));
+  }
+  template <typename... Patterns>
+    requires stockholm::detail::StrLike<Patterns...>
+  [[nodiscard]] consteval Pattern OneOf(Patterns&&... patterns) {
+    static_assert(sizeof...(patterns) >= 2,
+                  "OneOf requires at least two patterns");
+    return (patterns | ...);
+  }
 };
 }  // namespace stockholm
 
