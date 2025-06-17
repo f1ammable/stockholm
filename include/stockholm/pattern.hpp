@@ -24,8 +24,7 @@ class Pattern {
   explicit consteval Pattern(const detail::Yarn<>& str) : m_pattern(str) {}
 
  public:
-  friend consteval Pattern(::Start)();
-
+  friend consteval Pattern Start();
   [[nodiscard]] consteval std::string_view str() const {
     return this->m_pattern.view();
   }
@@ -115,22 +114,23 @@ class Pattern {
     return Pattern(detail::constexpr_fmt(FMT_COMPILE("{}|{}"),
                                          this->m_pattern.view(), rhs.str()));
   }
+
   template <typename... Patterns>
-    requires stockholm::detail::StrLike<Patterns...>
+    requires stockholm::detail::AllStrLike<Patterns...>
   [[nodiscard]] consteval Pattern OneOf(Patterns&&... patterns) {
     static_assert(sizeof...(patterns) >= 2,
                   "OneOf requires at least two patterns");
     return (patterns | ...);
   }
-};
+};  // namespace stockholm
+
+[[nodiscard]] consteval stockholm::Pattern Start() {
+  return stockholm::Pattern{};
+}
 }  // namespace stockholm
 
 [[nodiscard]] consteval std::string Capture(const stockholm::Pattern& pattern) {
   return std::string(pattern.str());
-}
-
-[[nodiscard]] consteval stockholm::Pattern Start() {
-  return stockholm::Pattern{};
 }
 
 #endif  // !STOCKHOLM_PATTERN_HPP

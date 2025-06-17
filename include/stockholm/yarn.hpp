@@ -55,7 +55,12 @@ class Yarn {
   [[nodiscard]] consteval size_t size() const { return m_size; }
 
   consteval Yarn operator+(const Yarn &other) const {
-    return Yarn(strncat(m_buffer, other.m_buffer, other.m_size));
+    Yarn result = *this;
+    for (size_t i = 0; i < m_size && m_size < capacity - 1; i++) {
+      result.m_buffer[i++] = other.m_buffer[i];
+    }
+    result.m_buffer[m_size] = '\0';
+    return result;
   }
 };
 }  // namespace stockholm::detail
