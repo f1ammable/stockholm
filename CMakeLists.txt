@@ -17,7 +17,13 @@ target_link_libraries(${PROJECT_NAME} INTERFACE fmt::fmt-header-only)
 
 # Test
 find_package(Catch2 CONFIG REQUIRED)
-add_executable(stockholm_test test/test.cpp)
+add_executable(stockholm_test
+        test/unit/test_pattern_basic.cpp
+        test/unit/test_pattern_quantifiers.cpp
+        test/unit/test_pattern_classes.cpp
+        test/unit/test_pattern_operators.cpp
+        test/unit/test_yarn.cpp
+)
 target_link_libraries(stockholm_test PRIVATE Catch2::Catch2WithMain)
 target_include_directories(stockholm_test PRIVATE ${PROJECT_SOURCE_DIR}/include)
 include(CTest)

@@ -20,4 +20,22 @@ TEST_CASE("Pattern - Basic Elements", "[pattern] [elements]") {
     constexpr auto res = std::string(pattern.str());
     CHECK(res.find("abc") != std::string::npos);
   }
+
+  SECTION("ZeroOrMore() adds * quantifier") {
+    constexpr static auto pattern = stockholm::Start().ZeroOrMore("abc");
+    constexpr auto res = std::string(pattern.str());
+    CHECK(res.find("abc*") != std::string::npos);
+  }
+
+  SECTION("OneOrMore() adds + quantifier") {
+    constexpr static auto pattern = stockholm::Start().OneOrMore("abc");
+    constexpr auto res = std::string(pattern.str());
+    CHECK(res.find("abc+") != std::string::npos);
+  }
+
+  SECTION("Optional adds ? quantifier") {
+    constexpr static auto pattern = stockholm::Start().Optional("abc");
+    constexpr auto res = std::string(pattern.str());
+    CHECK(res.find("abc?") != std::string::npos);
+  }
 }
