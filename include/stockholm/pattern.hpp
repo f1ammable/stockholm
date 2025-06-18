@@ -124,9 +124,7 @@ class Pattern {
   }
 };  // namespace stockholm
 
-[[nodiscard]] consteval stockholm::Pattern Start() {
-  return stockholm::Pattern{};
-}
+[[nodiscard]] consteval Pattern Start() { return Pattern{}; }
 }  // namespace stockholm
 
 [[nodiscard]] consteval std::string Capture(const stockholm::Pattern& pattern) {
