@@ -122,7 +122,7 @@ class Pattern {
                   "OneOf requires at least two patterns");
     return (patterns | ...);
   }
-};  // namespace stockholm
+};
 
 [[nodiscard]] consteval Pattern Start() { return Pattern{}; }
 }  // namespace stockholm

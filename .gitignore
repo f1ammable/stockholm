@@ -5,3 +5,4 @@ vcpkg/
 env.sh
 .cache/**
 .idea/**
+vcpkg*
