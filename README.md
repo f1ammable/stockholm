@@ -21,7 +21,28 @@ This is an early-stage project and currently implements very basic functionality
 - CMake 3.30 or newer
 
 ## Usage
-A basic demonstration can be seen [here](https://github.com/f1ammable/stockholm/blob/main/src/main.cpp).
+Here is a basic example of what the library currently has to offer
+
+```cpp
+#include <iostream>
+#include <stockholm.hpp>
+
+#include "stockholm/pattern.hpp"
+#include "stockholm/selector.hpp"
+
+int main() {
+  // Basic email pattern
+  constexpr std::string pattern =
+      Capture(stockholm::Start()
+                  .OneOrMore(Selector::ALPHANUM)
+                  .One("@")
+                  .OneOrMore(Selector::ALPHANUM)
+                  .One(".")
+                  .Quantify(Selector::ALPHANUM, 2, 4));
+
+  std::cout << pattern << std::endl;
+}
+```
 
 ## Building
 This project uses CMake as its build system:
