@@ -1,9 +1,6 @@
 #ifndef STOCKHOLM_PATTERN_HPP
 #define STOCKHOLM_PATTERN_HPP
 
-#include <fmt/compile.h>
-
-#include <string>
 #include <string_view>
 
 #include "stockholm/format.hpp"
