@@ -18,10 +18,6 @@ target_include_directories(
   INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-# Find and link dependencies
-find_package(fmt CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} INTERFACE fmt::fmt-header-only)
-
 # Set C++ standard requirement
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
@@ -38,7 +34,7 @@ if(STOCKHOLM_BUILD_TESTS)
     stockholm_test
     test/unit/test_pattern_basic.cpp test/unit/test_pattern_quantifiers.cpp
     test/unit/test_pattern_classes.cpp test/unit/test_pattern_operators.cpp
-    test/unit/test_yarn.cpp test/unit/test_map.cpp)
+    test/unit/test_yarn.cpp test/unit/test_format.cpp)
 
   target_link_libraries(stockholm_test PRIVATE Catch2::Catch2WithMain
                                                ${PROJECT_NAME}::${PROJECT_NAME})
